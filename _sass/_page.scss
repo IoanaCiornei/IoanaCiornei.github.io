@@ -202,7 +202,7 @@ header .entry-meta {
 	.entry-content {
 		margin: 40px 2px 20px 2px;
 		padding: 10px 15px;
-		background-color: $white;
+		background-color: $body-color;
 		box-shadow: 0 0 0 0, 0 6px 12px rgba($black,0.1);
 		@include rounded(3px);
 		@media #{$medium} {
@@ -222,7 +222,7 @@ header .entry-meta {
 	#disqus_thread {
 		margin: 40px 2px 20px 2px;
 		padding: 10px 15px;
-		background-color: $white;
+		background-color: $body-color;
 		box-shadow: 0 0 0 1px rgba($border-color,0.1), 0 6px 12px rgba($black,0.1);
 		@include rounded(3px);
 		@media #{$medium} {
@@ -276,7 +276,7 @@ header .entry-meta {
 	position: relative;
 	margin: 40px 2px 20px 2px;
 	padding: 40px 15px 25px;
-	background-color: $white;
+	background-color: $body-color;
 	box-shadow: 0 0 0 1px rgba($border-color,0.1), 0 6px 12px rgba($black,0.1);
 	@include rounded(3px);
 	@media #{$medium} {
@@ -363,7 +363,7 @@ header .entry-meta {
 		}
 	}
 	article {
-		background-color: $white;
+		background-color: $body-color;
 		box-shadow: 0 0 0 0, 0 6px 12px rgba($base-color,0.1);
 		@include rounded(3px);
 		margin-bottom: 20px;
@@ -452,7 +452,7 @@ header .entry-meta {
 	padding: 8px 20px;
 	display: inline-block;
 	@include font-rem(14);
-	background-color: $white;
+	background-color: $body-color;
 	color: $text-color;
 	border-width: 2px !important;
 	border-style: solid !important;
