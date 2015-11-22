@@ -1,5 +1,5 @@
-title:            Site Title
-description:      Describe your website here.
+title:            Linux Kernel adventures
+description:      tips and trick
 disqus_shortname: hpstrtheme
 reading_time:     true
 words_per_minute: 200
@@ -9,21 +9,21 @@ url:
 
 # Owner/author information
 owner:
-  name:           Your Name
+  name:           IoanaCiornei
   avatar:         avatar.jpg
-  bio:            "Your bio goes here. It shouldn't be super long but a good two sentences or two should suffice."
-  email:          you@email.com
+  bio:            "I am an computer science student currently interning at the Linux Foundation."
+  email:          ciorneiioana@gmail.com
   # Social networking links used in footer. Update and remove as you like.
-  twitter:        
-  facebook:       
-  github:         
+  twitter:
+  facebook:       https://www.facebook.com/ciornei.ioana
+  github:         https://github.com/IoanaCiornei
   stackexchange:  
   linkedin:       
   instagram:      
   flickr:         
   tumblr:         
   # google plus id, include the '+', eg +mmistakes
-  google_plus:    +yourid
+  google_plus:    +IoanaCiornei
 
 # Background image to be tiled on all pages
 background: 
