@@ -1,0 +1,144 @@
+---
+layout: post
+title: Setup the environment - Build ceph and ceph-client
+categories:
+description:
+tags: []
+image:
+  feature: main-background.jpg
+  credit: 7themes
+  creditlink: http://7-themes.com/7025787-brown-wallpaper-background-dekstop.html
+comments:
+share:
+---
+
+Hi, people!
+
+
+This post is the first from a series of posts in which I will describe
+in a detailed manner how to create the testing environment for this
+project.
+
+First, I should mention the fact that I worked on a machine that had
+Ubuntu 14.04 and that I do not recomend Arch or something like it for
+doing this kind of setup if you are not ready to spend several days just
+to catch and find solution for numerous bugs (trust me, I went down that
+road but my mentor Alex Elder advised me not to fool around and just
+change the OS to a LTS Ubuntu).
+
+Step 1: Install prerequisite packages
+
+	Here is a snippet from a script that I wrote that checks to see if
+	your system has all the packages and if not it installs them. If you
+	preffer installing them by hand below is a list.
+
+	packages_general=(git vim quilt);
+	packages_build=(autoconf automake autotools-dev debhelper libatomic-ops-dev
+					libboost-dev libcrypto++-dev libcurl4-gnutls-dev libedit-dev
+					libexpat1-dev libfcgi-dev libfuse-dev libgoogle-perftools-dev
+					libgtkmm-2.4-dev libkeyutils-dev libtool pkg-config python
+					python-dev python-pip python-support python-virtualenv uuid-dev
+					cython libsnappy-dev libleveldb-dev libblkid-dev libudev-dev
+					libnss3-dev libcurl4-nss-dev libaio-dev xfslibs-dev
+
+					libboost-thread-dev libboost-random-dev libboost-regex-dev
+					libboost-program-options-dev liblttng-ust-dev libbz2-dev);
+
+Step 2: Get the source code
+
+	Go to https://github.com/ceph/ and as you
+	see there will be more projects that the ceph community is working
+	on. At the moment, we are interested in ceph and ceph-client.
+
+
+	Just to make everything clean and easy I will describe my folder
+	structure. In my home directory I have an empty folder 'work' where
+	I want to place ceph derived things.
+
+	# it will take some time depending on the internet connection
+	cd ~/ceph
+	git clone https://github.com/ceph/ceph.git
+	git clone https://github.com/ceph/ceph-client
+
+
+Step 3: Build ceph
+
+	We will build ceph using Autotools and the below instructions can
+	also be found in ceph/README along other useful things such as
+	building ceph using cmake (if you prefer it that way).
+
+	There are two steps involved in building anything: configuring and
+	actually building it.
+
+	# get to the right directory
+	cd ~/work
+	cd ceph
+
+	# handle the configuration part
+	./do_autogen.sh -d3 
+
+	# now build ceph
+
+	make
+
+	or if you have multiple cores/threads it would be better to use
+
+	make -j $num_procs
+
+	where 'num_procs' is the number of processors of your system. What
+	it does is to specify the right level of conccurency and therefore speedup
+	your build. In my case it is: make -j4.
+
+
+	Now you should just go watch a movie, read a book or anything else...
+	because it may take a while.
+
+Step 4: Build ceph-client
+
+
+	If you browse a little bit the ceph-client folder you may discover
+	that ceph-client is actually a kernel source appended with anything
+	that the ceph project needs.
+
+	Now I should mention the fact that this step needs another package
+	installed, so:
+
+	sudo apt-get install libncurses5-dev  # in order to user ncurses headers
+
+	The first thing to do is to get to the right folder in order to
+	configure and build the kernel.
+
+	cd ~/work/ceph-client
+
+	Now is the moment to mention the fact that the only thing that
+	distinguishes this build from any other one is the right
+	configuration that can be achieved with the following steps.
+
+	Creates a default configuration file .config based
+	on your system architecture
+
+	make defconfig
+
+	Add the specific bits that ceph client is interested in, more
+	exactly CEPH_LIB, CEPH_LIB_PRETTYDEBUG and CEPH_FS.
+	'make menuconfig' is using ncurses in order to provide an interface
+	to the configuration process
+
+	make menuconfig # only accepted way of editing kernel conf file
+
+	It will show a window in the current terminal. If you type  '/' a
+	search window will appear. The next step is to search for the three
+	key words and just activate their config options by hitting the 'y'
+	button. Save and exit. After this in your .config file from the
+	ceph-client root folder is a fully functional configuration file.
+
+	Now lets build the kernel:
+
+	make -j4 # by this time you know why is there a '-j4' option
+
+
+Congratulations!
+You just finished the first tutorial in order to setup the environment
+for ceph development and testing.
+
+See you next time!
