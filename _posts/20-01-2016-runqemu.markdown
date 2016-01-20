@@ -1,0 +1,98 @@
+---
+layout: post
+title:  Setup the environment - Run VM in qemu
+categories:
+description:
+tags: []
+image:
+  feature: main-background.jpg
+  credit: 7themes
+  creditlink: http://7-themes.com/7025787-brown-wallpaper-background-dekstop.html
+comments:
+share:
+---
+
+	If you followed the previous two blog posts now you should have a
+rootfiles system, a kernel image and a compiled ceph to run on your
+host.
+
+	Now that we have everything that we need we should get to work in
+running the VM, the ceph filesystem and mount the filesystem into the
+guest VM.
+
+	The first step is to run the virtual machine using qemu. I have
+created a small script that just creates and configures a network
+bridge, a tap connected to it and to the VM and starts the virtual
+machine.
+
+	For this to happen smoothly you should install some packages:
+		* bridge-utils  (in order to create a bridge)
+		* isc-dhcp-server (to start a dhcp server on the bridge
+		  interface)
+
+	In order to configure the dhcp server you should add the following
+entry at the end of /etc/dhcp/dhcpd.conf file:
+
+        subnet 192.168.2.0 netmask 255.255.255.0 {
+			range dynamic-bootp 192.168.2.5 192.168.2.150;
+			option broadcast-address 192.168.2.255;
+			option routers 192.168.2.4 ;
+		}
+
+	The folder structure in which I copied the rootfs and the kernel is
+	the following:
+
+	drwxrwxr-x  5 ioana 1000 4096 Jan 20 15:36 ./
+	drwxr-xr-x 25 ioana 1000 4096 Jan 20 13:17 ../
+	drwxrwxr-x 24 ioana 1000 4096 Dec 30 02:09 ceph/
+	drwxrwxr-x 26 ioana 1000 4096 Jan 20 16:28 ceph-client/
+	drwxr-xr-x  3 root  root 4096 Jan 20 16:45 testing/
+
+	drwxr-xr-x 3 root  root  4096 Jan 20 16:45 ./
+	drwxrwxr-x 5 ioana  1000 4096 Jan 20 15:36 ../
+	drwxr-xr-x 2 root  root  4096 Jan 20 16:08 boot_files/
+	-rwxrwxr-x 1 ioana users  614 Jan 20 16:46 launch.sh*
+
+	root@yoga:/home/ioana/work/testing# ll boot_files/
+	drwxr-xr-x 2 root root       4096 Jan 20 16:08 ./
+	drwxr-xr-x 3 root root       4096 Jan 20 16:45 ../
+	-rw-r--r-- 1 root root    6307248 Jan 20 16:28 bzImage
+	-rw-r--r-- 1 root root 1073741824 Jan 20 16:47 rootfs.img
+
+
+	The script that you need to use in order to launch the qemu VM is:
+
+launch.sh:
+
+	#! /bin/sh
+
+	brctl addbr br0
+	ip addr add 192.168.5.4/24 broadcast 192.168.5.255 dev br0
+	ip link set br0 up
+
+	ip tuntap add dev tap0 mode tap
+	ip link set tap0 up promisc on
+
+	brctl addif br0 tap0
+
+	qemu-system-x86_64  -M pc -m 1024 -no-reboot -kernel \
+	boot_files/bzImage  -append "highres=off \
+	root=/dev/sda rootfstype=ext3" \
+	-hda  boot_files/rootfs.img \
+	-net nic,macaddr="52:54:be:36:42:a9" -net tap,ifname=tap0,script=no,downscript=no
+
+	ip link set br0 down
+	brctl delbr br0
+
+	ip link set tap0 down
+	ip link delete tap0
+
+
+This script will open a new qemu window from where you can interract
+with your new vitual machine.
+
+The default user is root and it does not have a password.
+
+
+Until next time!
+
