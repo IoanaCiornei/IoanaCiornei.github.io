@@ -1,0 +1,63 @@
+---
+layout: post
+title: Bugfix in the launch script
+categories:
+description:
+tags: []
+image:
+  feature: main-background.jpg
+  credit: 7themes
+  creditlink: http://7-themes.com/7025787-brown-wallpaper-background-dekstop.html
+comments:
+share:
+---
+
+As the title suggests there were some problems in the script that
+launched the qemu instance. This post is trying to get solve that
+problem.
+
+When launching the qemu instance you might have observed the fact that
+there you were not able to run smoothly any command and the password
+promt or the login one just showed up over and over again.
+
+It seems that there were 2 instances of the "getty" process that just
+got bits an pieces from what you were typing and never enough to make a
+proper login.
+
+I chose to solve this issue by redirecting the output from the virtual
+machine into the host terminal so that you do not have to deal with
+another window or any login problems.
+
+The revised script is below:
+
+
+    #! /bin/sh
+
+    brctl addbr br0
+    ip addr add 192.168.5.4/24 broadcast 192.168.5.255 dev br0
+    ip link set br0 up
+
+    ip tuntap add dev tap0 mode tap
+    ip link set tap0 up promisc on
+
+    brctl addif br0 tap0
+
+    qemu-system-x86_64  -M pc -m 1024 -no-reboot \
+    -nographic \
+    -kernel boot_files/bzImage  -append "console=ttyS0,115200 highres=off \
+    root=/dev/sda rootfstype=ext3" \
+    -hda  boot_files/rootfs.img \
+    -net nic,macaddr="52:54:be:36:42:a9" -net tap,ifname=tap0,script=no,downscript=no
+
+    ip link set br0 down
+    brctl delbr br0
+
+    ip link set tap0 down
+    ip link delete tap0
+
+
+
+Thanks again.
+
+See you next time.
+
