@@ -11,7 +11,7 @@ url:
 owner:
   name:           IoanaCiornei
   avatar:         avatar.jpg
-  bio:            "I am an computer science student currently interning at the Linux Foundation."
+  bio:            "computer engineer"
   email:          ciorneiioana@gmail.com
   # Social networking links used in footer. Update and remove as you like.
   twitter:
@@ -37,7 +37,7 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Bucharest
 future:      true
-highlighter: pygments
+highlighter: rouge
 markdown:    kramdown
 gems:
   - jekyll-sitemap
